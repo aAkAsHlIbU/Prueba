@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "83542331069",
+    "project_id": "preuba-58d32",
+    "storage_bucket": "preuba-58d32.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:83542331069:android:1fc882dd8707f17eb871d4",
+        "android_client_info": {
+          "package_name": "com.aak.preuba"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "83542331069-6tn3hq338modp4hcdnrvtejgt3shn7dh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8ChNs88Xv_veqo3nsHqox_ikdcgHG9PE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "83542331069-6tn3hq338modp4hcdnrvtejgt3shn7dh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
