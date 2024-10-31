@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "858819321082",
+    "firebase_url": "https://incampus-98868-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "incampus-98868",
+    "storage_bucket": "incampus-98868.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:858819321082:android:07f382c1e7e11265e3bd43",
+        "android_client_info": {
+          "package_name": "com.example.incampus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "858819321082-4mks8no2iigj8g3gdvb72845j5hu7fnu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.incampus",
+            "certificate_hash": "13b12c347963777f82d339f35df193601554b28c"
+          }
+        },
+        {
+          "client_id": "858819321082-fklt22o8l42i47pdtp8as87rbefupvvc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.incampus",
+            "certificate_hash": "349c32ebee82709e1c7ebfec2df314692139b4f1"
+          }
+        },
+        {
+          "client_id": "858819321082-2l3fdccjdqopkg2ffu98o14v9lucfhcl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeqPfb9mpYnMVIJ6eoi1RL6BEdn1CdvTQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "858819321082-2l3fdccjdqopkg2ffu98o14v9lucfhcl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
