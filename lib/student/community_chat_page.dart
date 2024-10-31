@@ -274,132 +274,136 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
     final senderName = _userNames[message['senderId']] ?? 'Unknown';
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onLongPress: () {
+        print("Long press detected");
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.grey[850],
           builder: (context) => Container(
-            padding: EdgeInsets.symmetric(vertical: 20),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (_isTeacher)
                   ListTile(
-                    leading: Icon(Icons.delete, color: Colors.red),
-                    title: Text('Delete Message', 
+                    leading: const Icon(Icons.delete, color: Colors.red),
+                    title: const Text('Delete Message', 
                       style: TextStyle(color: Colors.white)
                     ),
                     onTap: () {
-                      Navigator.pop(context); // Close bottom sheet
+                      Navigator.pop(context);
                       _showDeleteMessageDialog(message);
                     },
                   ),
-                // Add more options here if needed
               ],
             ),
           ),
         );
       },
-      child: Dismissible(
-        key: Key(message['timestamp'].toString()),
-        direction: isCurrentUser
-            ? DismissDirection.endToStart
-            : DismissDirection.startToEnd,
-        confirmDismiss: (direction) async {
-          setState(() {
-            _replyingTo = {
-              ...message,
-              'senderName': senderName,
-            };
-          });
-          return false;
-        },
-        background: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
-          color: Colors.blue.withOpacity(0.2),
-          child: Transform(
-            transform: Matrix4.identity()
-              ..scale(isCurrentUser ? -1.0 : 1.0, 1.0, 1.0),
-            alignment: Alignment.center,
-            child: Icon(
-              Icons.reply,
-              color: Colors.white,
+      child: Container(
+        width: double.infinity,
+        child: Dismissible(
+          key: Key(message['timestamp'].toString()),
+          direction: isCurrentUser
+              ? DismissDirection.endToStart
+              : DismissDirection.startToEnd,
+          confirmDismiss: (direction) async {
+            setState(() {
+              _replyingTo = {
+                ...message,
+                'senderName': senderName,
+              };
+            });
+            return false;
+          },
+          background: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
+            color: Colors.blue.withOpacity(0.2),
+            child: Transform(
+              transform: Matrix4.identity()
+                ..scale(isCurrentUser ? -1.0 : 1.0, 1.0, 1.0),
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.reply,
+                color: Colors.white,
+              ),
             ),
           ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-          child: Row(
-            // Changed to Row for proper alignment
-            mainAxisAlignment:
-                isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-            children: [
-              Flexible(
-                // Added Flexible for proper width constraints
-                child: Container(
-                  constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.7),
-                  decoration: BoxDecoration(
-                    color: isCurrentUser ? Colors.blue : Colors.grey[800],
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        senderName,
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+            child: Row(
+              // Changed to Row for proper alignment
+              mainAxisAlignment:
+                  isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+              children: [
+                Flexible(
+                  // Added Flexible for proper width constraints
+                  child: Container(
+                    constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.7),
+                    decoration: BoxDecoration(
+                      color: isCurrentUser ? Colors.blue : Colors.grey[800],
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          senderName,
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      if (message['replyTo'] != null) ...[
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          margin: EdgeInsets.symmetric(vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.black26,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                message['replyTo']['senderName'],
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                        if (message['replyTo'] != null) ...[
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            margin: EdgeInsets.symmetric(vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.black26,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  message['replyTo']['senderName'],
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                message['replyTo']['text'],
-                                style: TextStyle(
-                                    color: Colors.white70, fontSize: 12),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                                Text(
+                                  message['replyTo']['text'],
+                                  style: TextStyle(
+                                      color: Colors.white70, fontSize: 12),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
                           ),
+                        ],
+                        Text(
+                          message['text'],
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          _formatTimestamp(message['timestamp']),
+                          style: TextStyle(color: Colors.white70, fontSize: 10),
                         ),
                       ],
-                      Text(
-                        message['text'],
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        _formatTimestamp(message['timestamp']),
-                        style: TextStyle(color: Colors.white70, fontSize: 10),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
