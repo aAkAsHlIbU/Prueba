@@ -378,6 +378,7 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                                // hello
                                 Text(
                                   message['replyTo']['text'],
                                   style: TextStyle(
