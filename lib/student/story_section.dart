@@ -35,29 +35,85 @@ class StorySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Filter stories to only include friends' stories and stories less than 24 hours old
-    final friendStories = stories.where((story) {
-      // Check if user is a friend
-      bool isFriend = friendIds.contains(story['userId']);
+    print("Total stories received: ${stories.length}");
+    print("Current user ID: $currentUserId");
+    print("Friend IDs: $friendIds");
 
-      // Check if story is less than 24 hours old
-      bool isRecent = false;
+    // First, filter own stories (only 24hr check)
+    final ownStories = stories.where((story) {
+      String storyUserId = story['userId'] ?? story['storyUserId'] ?? '';
+      bool isOwnStory = storyUserId == currentUserId;
+
       if (story['timestamp'] != null) {
-        DateTime storyTime =
-            DateTime.fromMillisecondsSinceEpoch(story['timestamp']);
+        int timestamp = story['timestamp'] is int
+            ? story['timestamp']
+            : int.parse(story['timestamp'].toString());
+        DateTime storyTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
         DateTime now = DateTime.now();
-        Duration difference = now.difference(storyTime);
-        isRecent = difference.inHours < 24;
+        
+        // Check if the story is within the last 24 hours
+        bool isRecent = now.difference(storyTime).inHours < 24;
+
+        // Debug prints
+        print("Story time: $storyTime");
+        print("Now: $now");
+        print("Story user ID: $storyUserId");
+        print("Is own story: $isOwnStory");
+        print("Is recent: $isRecent");
+        
+        return isOwnStory && isRecent; // Update return condition
       }
 
-      return isFriend && isRecent;
+      return false; // If no timestamp, exclude the story
     }).toList();
 
+    print("Own stories found: ${ownStories.length}");
+
+    // Then, filter friends' stories
+    final friendStories = stories.where((story) {
+      String storyUserId = story['userId'] ?? story['storyUserId'] ?? '';
+      bool isFriend = friendIds.contains(storyUserId);
+      bool isNotOwnStory = storyUserId != currentUserId;
+
+      if (story['timestamp'] != null) {
+        int timestamp = story['timestamp'] is int
+            ? story['timestamp']
+            : int.parse(story['timestamp'].toString());
+        DateTime storyTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+        DateTime now = DateTime.now();
+        
+        // Check if the story is within the last 24 hours
+        bool isRecent = now.difference(storyTime).inHours < 24;
+
+        print("Friend story check:");
+        print("Story user ID: $storyUserId");
+        print("Is friend: $isFriend");
+        print("Is not own story: $isNotOwnStory");
+        print("Is recent: $isRecent");
+        
+        return isFriend && isNotOwnStory && isRecent; // Update return condition
+      }
+
+      return false; // If no timestamp, exclude the story
+    }).toList();
+
+    print("Friend stories found: ${friendStories.length}");
+
+    // Sort each list by timestamp (most recent first)
+    ownStories
+        .sort((a, b) => (b['timestamp'] ?? 0).compareTo(a['timestamp'] ?? 0));
+    friendStories
+        .sort((a, b) => (b['timestamp'] ?? 0).compareTo(a['timestamp'] ?? 0));
+
+    // Combine the lists with own stories first
+    final allStories = [...ownStories, ...friendStories];
+    print("Total stories to display: ${allStories.length}");
+
     return Container(
-      height: 90, // Reduced height
+      height: 90,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: friendStories.length + 1,
+        itemCount: allStories.length + 1,
         itemBuilder: (context, index) {
           if (index == 0) {
             return _buildStoryItem(
@@ -66,7 +122,7 @@ class StorySection extends StatelessWidget {
               label: 'Your Story',
             );
           } else {
-            final story = friendStories[index - 1];
+            final story = allStories[index - 1];
             return _buildStoryItem(
               context,
               child: _buildStoryAvatar(context, story),
@@ -311,6 +367,7 @@ class StorySection extends StatelessWidget {
           'thumbnailUrl': thumbnailUrl,
           'type': isVideo ? 'video' : 'image',
           'timestamp': ServerValue.timestamp,
+          'userId': userId,
           'username': userData['name'] ?? 'Anonymous',
           'userProfilePicture': userData['profilePicture'] ?? '',
         });
