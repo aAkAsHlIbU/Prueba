@@ -122,14 +122,13 @@ class _FeedPageState extends State<FeedPage> {
       List<Map<String, dynamic>> newStories = [];
 
       allStories.forEach((userId, userStories) {
-        // Only process stories from friends and the current user
-        if (_friendIds.contains(userId) &&
-            userStories is Map<dynamic, dynamic>) {
+        if (userStories is Map<dynamic, dynamic>) {
           userStories.forEach((storyId, storyData) {
             if (storyData is Map<dynamic, dynamic>) {
               newStories.add({
                 'id': storyId,
                 'userId': userId,
+                'storyUserId': userId, // Added this line
                 ...Map<String, dynamic>.from(storyData),
               });
             }
@@ -137,12 +136,14 @@ class _FeedPageState extends State<FeedPage> {
         }
       });
 
-      // Sort stories by timestamp (most recent first)
-      newStories
-          .sort((a, b) => (b['timestamp'] ?? 0).compareTo(a['timestamp'] ?? 0));
-
       setState(() {
         _stories = newStories;
+      });
+
+      print("Loaded stories: ${_stories.length}"); // Added this line
+      _stories.forEach((story) { // Added this block
+        print(
+            "Story: userId=${story['userId']}, timestamp=${story['timestamp']}");
       });
     }
   }
