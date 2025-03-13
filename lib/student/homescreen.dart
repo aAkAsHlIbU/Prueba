@@ -14,6 +14,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:incampus/services/content_moderation_service.dart';
 
 class StudentDashboard extends StatefulWidget {
   @override
@@ -251,7 +252,34 @@ class _StudentDashboardState extends State<StudentDashboard> {
     );
   }
 
-  Future<void> _createNewPost(
+  Future<void> _createNewPost(File file, bool isVideo, String description) async {
+    if (isVideo) {
+      return _createNewPostImplementation(file, isVideo, description);
+    }
+
+    // Show checking content message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Checking content...'), duration: Duration(seconds: 2)),
+    );
+
+    // Check both image and description
+    bool isAppropriate = await ContentModerationService.isContentAppropriate(file, description);
+
+    if (!isAppropriate) {
+      String errorMessage = ContentModerationService.getContentModerationError(file, description);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    return _createNewPostImplementation(file, isVideo, description);
+  }
+
+  Future<void> _createNewPostImplementation(
       File file, bool isVideo, String description) async {
     String fileName =
         'posts/${DateTime.now().millisecondsSinceEpoch}.${isVideo ? 'mp4' : 'jpg'}';

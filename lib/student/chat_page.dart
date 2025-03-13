@@ -512,7 +512,7 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  // Simplified toxic word check without model loading
+  // Simplified toxic word check 
   Future<bool> checkWordToxicity(String word) async {
     if (word.trim().isEmpty) return false;
     
