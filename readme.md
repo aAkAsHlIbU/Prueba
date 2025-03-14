@@ -86,9 +86,7 @@ We welcome contributions from fellow students and developers! If you have ideas 
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## 📞 Contact
 
-For any queries or support, please reach out to our team at amalantoney123@gmail.com
 
 ---
 
