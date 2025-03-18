@@ -210,43 +210,50 @@ class _StudentDashboardState extends State<StudentDashboard> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(isReel ? 'New Reel' : 'New Post'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              isVideo
-                  ? Text('Video selected')
-                  : Image.file(file, height: 200, fit: BoxFit.cover),
-              SizedBox(height: 16),
-              TextField(
-                decoration: InputDecoration(hintText: "Enter description"),
-                maxLines: 3,
-                onChanged: (value) {
-                  description = value;
-                },
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: AlertDialog(
+              title: Text(isReel ? 'New Reel' : 'New Post'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  isVideo
+                      ? Text('Video selected')
+                      : Image.file(file, height: 200, fit: BoxFit.cover),
+                  SizedBox(height: 16),
+                  TextField(
+                    decoration: InputDecoration(hintText: "Enter description"),
+                    maxLines: 3,
+                    onChanged: (value) {
+                      description = value;
+                    },
+                  ),
+                ],
               ),
-            ],
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: Text('Post'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    if (isReel) {
+                      _createNewReel(file, description);
+                    } else {
+                      _createNewPost(file, isVideo, description);
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Post'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                if (isReel) {
-                  _createNewReel(file, description);
-                } else {
-                  _createNewPost(file, isVideo, description);
-                }
-              },
-            ),
-          ],
         );
       },
     );
