@@ -19,6 +19,17 @@ class ContentModerationService {
     "torture", "abuse", "victim", "threat", "terror",
     "brutal", "savage", "cruel", "vicious", "aggressive",
     "riot", "protest", "gang", "thug", "criminal",
+    "weed", "marijuana", "pot", "cannabis",
+    "cocaine", "coke", "crack", "heroin",
+    "meth", "crystal", "mdma", "ecstasy",
+    "lsd", "acid", "shrooms", "mushrooms",
+    "xanax", "valium", "oxy",
+    "oxycodone", "vicodin", "adderall",
+    "score", "hook up", "plug",
+    "stoned", "blazed", "lit",
+    "tripping", "smoke", "joint", "blunt",
+    "bong",  
+    
   ];
 
   static Future<bool> isContentAppropriate(File imageFile, String description) async {

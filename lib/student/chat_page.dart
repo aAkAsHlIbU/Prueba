@@ -548,6 +548,19 @@ class _ChatPageState extends State<ChatPage> {
       // Discriminatory terms
       "terrorist", "nazi", "racist",
       "go back to", "your kind", "you people",
+      
+      // Drug-related terms
+      "weed", "marijuana", "pot", "cannabis",
+      "cocaine", "coke", "crack", "heroin",
+      "meth", "crystal", "mdma", "ecstasy",
+      "lsd", "acid", "shrooms", "mushrooms",
+      "xanax", "valium", "oxy",
+      "oxycodone", "vicodin", "adderall",
+      "dealer", "score", "hook up", "plug",
+      "high", "stoned", "blazed", "lit",
+      "rolling", "tripping", "shooting up",
+      "snort", "smoke", "joint", "blunt",
+      "bong", "needle", "syringe", "overdose",
     ];
     
     return toxicWords.any((toxic) => 

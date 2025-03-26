@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 
 class CommunityChatPage extends StatefulWidget {
   final String communityId;
@@ -25,6 +26,8 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
   Map<String, String> _communityMembers = {};
   String _creatorId = '';
   Map<String, dynamic>? _replyingTo;
+  bool _containsToxicWord = false;
+  Timer? _typingTimer;
 
   @override
   void initState() {
@@ -135,8 +138,21 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
     });
   }
 
-  void _sendMessage() {
+  void _sendMessage() async {
     if (_messageController.text.isNotEmpty) {
+      // Check for toxic content before sending
+      bool hasToxicContent = await checkWordToxicity(_messageController.text);
+      
+      if (hasToxicContent) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Message contains inappropriate content'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       final message = {
         'senderId': _currentUserId,
         'text': _messageController.text,
@@ -431,14 +447,30 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
                       Expanded(
                         child: TextField(
                           controller: _messageController,
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: _containsToxicWord ? Colors.red : Colors.white),
                           decoration: InputDecoration(
                             hintText: 'Type a message...',
                             hintStyle: TextStyle(color: Colors.grey[400]),
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
+                            errorText: _containsToxicWord ? 'Message contains inappropriate content' : null,
                           ),
+                          onChanged: (text) {
+                            // Cancel previous timer
+                            _typingTimer?.cancel();
+                            
+                            // Start new timer to check text
+                            _typingTimer = Timer(Duration(milliseconds: 500), () async {
+                              bool isToxic = await checkWordToxicity(text);
+                              
+                              if (mounted) {
+                                setState(() {
+                                  _containsToxicWord = isToxic;
+                                });
+                              }
+                            });
+                          },
                         ),
                       ),
                     ],
@@ -603,6 +635,67 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
         currentUserId: _currentUserId,
       ),
     ));
+  }
+
+  Future<bool> checkWordToxicity(String word) async {
+    if (word.trim().isEmpty) return false;
+    
+    final List<String> toxicWords = [
+      // Violence-related
+      "kill", "murder", "die", "death", "suicide", "hurt",
+      "stab", "shoot", "attack", "fight", "beat up",
+      
+      // Existing hate speech
+      "hate", "stupid", "idiot", 
+      "sex", "fuck", "bitch", "asshole",
+      "faggot", "retard", "nigger", "nigga",
+      
+      // Additional slurs and offensive terms
+      "whore", "slut", "cunt", "pussy",
+      "dick", "bastard", "motherfucker",
+      
+      // Bullying phrases
+      "i hate you", "you're stupid", "you should quit",
+      "nobody likes you", "you're worthless", "this is garbage",
+      "you don't belong here", "you're terrible",
+      "everyone thinks you're", "leave and never come back",
+      
+      // Threats
+      "i will kill", "going to kill", "want to kill",
+      "kill yourself", "hope you die", "should die",
+      
+      // Additional toxic phrases
+      "go to hell", "rot in hell", "end your life",
+      "kill yourself", "kys", "neck yourself",
+      "off yourself", "end it all",
+      
+      // Discriminatory terms
+      "terrorist", "nazi", "racist",
+      "go back to", "your kind", "you people",
+      
+      // Drug-related terms
+      "weed", "marijuana", "pot", "cannabis",
+      "cocaine", "coke", "crack", "heroin",
+      "meth", "crystal", "mdma", "ecstasy",
+      "lsd", "acid", "shrooms", "mushrooms",
+      "xanax", "valium", "oxy",
+      "oxycodone", "vicodin", "adderall",
+      "dealer", "score", "hook up", "plug",
+      "high", "stoned", "blazed", "lit",
+      "rolling", "tripping", "shooting up",
+      "snort", "smoke", "joint", "blunt",
+      "bong", "needle", "syringe", "overdose",
+    ];
+    
+    return toxicWords.any((toxic) => 
+      word.toLowerCase().trim().contains(toxic.toLowerCase()));
+  }
+
+  @override
+  void dispose() {
+    _typingTimer?.cancel();
+    _messageController.dispose();
+    super.dispose();
   }
 }
 
